@@ -2,7 +2,7 @@
   "name": "sails-hook-sequelize",
   "version": "1.0.1",
   "description": "Sails.js hook to use sequelize ORM",
-  "main": "index.js",
+  "main": "index.coffee",
   "sails": {
     "isHook": true
   },
