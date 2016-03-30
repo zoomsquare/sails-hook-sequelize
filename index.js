@@ -1,5 +1,8 @@
+prequire = require("parent-require");
+global.Sequelize = prequire('sequelize');
+
 module.exports = function(sails) {
-  global['Sequelize'] = require('sequelize');
+
   Sequelize.cls = require('continuation-local-storage').createNamespace('sails-sequelize-postgresql');
   return {
     initialize: function(next) {
