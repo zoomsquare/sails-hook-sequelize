@@ -1,7 +1,7 @@
 global.Sequelize = require('parent-require') 'sequelize'
 
 module.exports = (sails) ->
-  Sequelize.cls = require('continuation-local-storage').createNamespace('sails-sequelize-postgresql');
+  #Sequelize.cls = require('continuation-local-storage').createNamespace('sails-sequelize-postgresql');
 
   initialize: (next) ->
     sails.adapters ?= {}
@@ -38,8 +38,8 @@ module.exports = (sails) ->
 
         model = sequelize.define modelDef.globalId, modelDef.attributes, modelDef.options
 
-        for key, val of model.rawAttributes
-          console.log "   #{key}: #{JSON.stringify sails.util._.omit val, "Model"}"
+#        for key, val of model.rawAttributes
+#          console.log "   #{key}: #{JSON.stringify sails.util._.omit val, "Model"}"
         global[modelDef.globalId] = model
         sails.models[modelDef.globalId.toLowerCase()] = model
 
