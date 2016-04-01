@@ -1,7 +1,9 @@
 global.Sequelize = require('parent-require') 'sequelize'
 
 module.exports = (sails) ->
-  #Sequelize.cls = require('continuation-local-storage').createNamespace('sails-sequelize-postgresql');
+
+  configure: ->
+    sails.log.verbose "sequelize: configuring.."
 
   initialize: (next) ->
     sails.adapters ?= {}
@@ -11,9 +13,9 @@ module.exports = (sails) ->
 
     connection = sails.config.connections[connectionName]
     unless connection?
-      throw new Error "sails-sequelize: Connection #{connectionName} not found in config.connections"
+      throw new Error "sequelize: Connection #{connectionName} not found in config.connections"
 
-    sails.log.verbose "sails-sequelize: Using connection '#{connectionName}'"
+    sails.log.verbose "sequelize: Using connection '#{connectionName}'"
 
     connection.options ?= {}
     #A function that gets executed everytime Sequelize would log something.
@@ -32,33 +34,31 @@ module.exports = (sails) ->
         return next err
 
       for name, modelDef of modelDefs
-        sails.log.verbose "sails-sequelize: Loading model '#{modelDef.globalId}'"
+        sails.log.verbose "sequelize: Loading model '#{modelDef.globalId}'"
 
         model = sequelize.define modelDef.globalId, modelDef.attributes, modelDef.options
 
-#        for key, val of model.rawAttributes
-#          console.log "   #{key}: #{JSON.stringify sails.util._.omit val, "Model"}"
         global[modelDef.globalId] = model
         sails.models[modelDef.globalId.toLowerCase()] = model
 
       for name, modelDef of modelDefs
         if modelDef.defaultScope? and typeof modelDef.defaultScope is 'function'
-          sails.log.verbose "sails-sequelize: Loading default scope for '#{modelDef.globalId}'"
+          sails.log.verbose "sequelize: Loading default scope for '#{modelDef.globalId}'"
           global[modelDef.globalId].addScope 'defaultScope', modelDef.defaultScope() or {}, override: true
         if modelDef.associations? and typeof modelDef.associations is 'function'
-          sails.log.verbose "sails-sequelize: Loading associations for '#{modelDef.globalId}'"
+          sails.log.verbose "sequelize: Loading associations for '#{modelDef.globalId}'"
           modelDef.associations modelDef
 
       if sails.config.models.migrate is 'safe'
-        sails.log.verbose "sails-sequelize: not migrating."
+        sails.log.verbose "sequelize: not migrating."
         next()
       else
-        sails.log.verbose "sails-sequelize: starting migration: #{sails.config.models.migrate}"
+        sails.log.verbose "sequelize: starting migration: #{sails.config.models.migrate}"
         force = sails.config.models.migrate is 'drop'
         sequelize.sync {force}
         .then ->
-          sails.log.verbose "sails-sequelize: successfully migrated."
+          sails.log.verbose "sequelize: successfully migrated."
           next()
         .catch (err) ->
-          sails.log.error "sails-sequelize: error running migrations: #{err.message}"
+          sails.log.error "sequelize: error running migrations: #{err.message}"
           next err
