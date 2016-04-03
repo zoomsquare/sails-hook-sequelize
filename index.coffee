@@ -1,9 +1,10 @@
-global.Sequelize = require('parent-require') 'sequelize'
+Sequelize = require('parent-require') 'sequelize'
 
 module.exports = (sails) ->
 
   configure: ->
     sails.log.verbose "sequelize: configuring.."
+    global.Sequelize = Sequelize
 
   initialize: (next) ->
     sails.adapters ?= {}
@@ -19,12 +20,12 @@ module.exports = (sails) ->
 
     connection.options ?= {}
     #A function that gets executed everytime Sequelize would log something.
-    connection.options.logging = connection.options.logging or sails.log.verbose
+    connection.options.logging ?= sails.log.verbose
 
     if connection.url
-      sequelize = new Sequelize(connection.url, connection.options)
+      sequelize = new Sequelize connection.url, connection.options
     else
-      sequelize = new Sequelize(connection.database, connection.user, connection.password, connection.options)
+      sequelize = new Sequelize connection.database, connection.user, connection.password, connection.options
 
     global.sequelize = sequelize
 
