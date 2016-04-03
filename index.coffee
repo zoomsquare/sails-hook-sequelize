@@ -36,7 +36,9 @@ module.exports = (sails) ->
       for name, modelDef of modelDefs
         sails.log.verbose "sequelize: Loading model '#{modelDef.globalId}'"
 
-        model = sequelize.define modelDef.globalId, modelDef.attributes, modelDef.options
+        options = sails.util.extend {}, sails.util.merge({tableName: modelDef.globalId.toLowerCase()}, modelDef.options)
+
+        model = sequelize.define modelDef.globalId, modelDef.attributes, options
 
         global[modelDef.globalId] = model
         sails.models[modelDef.globalId.toLowerCase()] = model
