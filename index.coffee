@@ -52,8 +52,11 @@ module.exports = (sails) ->
           sails.log.verbose "sequelize: Loading associations for '#{modelDef.globalId}'"
           modelDef.associations modelDef
 
+        modelDef.initialize?()
+
+      sails.log.verbose "sequelize: Initialized '#{modelDef.globalId}'"
       if sails.config.models.migrate is 'safe'
-        sails.log.verbose "sequelize: not migrating."
+        sails.log.verbose "sequelize: 'safe' enabled, not migrating."
         next()
       else
         sails.log.verbose "sequelize: starting migration: #{sails.config.models.migrate}"
